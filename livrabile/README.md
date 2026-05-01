@@ -71,7 +71,7 @@ OPTION B (Physical Phone):
 
   - Rebuild APK if needed
 ===================================================================================
- IMPORTANT NOTES
+IMPORTANT NOTES
 
 - Backend MUST be running before opening the app
 - Ollama MUST be running with the correct model
