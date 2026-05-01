@@ -78,6 +78,7 @@ OPTION B (Physical Phone):
 - Without backend → app will show network error
 
 ===================================================================================
+ 
  Key Features
 
 - ADHD Mode → micro-learning, high focus cards
