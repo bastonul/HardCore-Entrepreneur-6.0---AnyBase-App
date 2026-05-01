@@ -70,6 +70,7 @@ OPTION B (Physical Phone):
     http://YOUR_IP:8080/api (ex. http://192.168.1.153:8080/api)
 
   - Rebuild APK if needed
+
 ===================================================================================
 IMPORTANT NOTES
 
