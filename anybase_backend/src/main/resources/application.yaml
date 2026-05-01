@@ -9,5 +9,5 @@ anybase:
   ai:
     api-key: "ollama"
     url: "http://localhost:11434/v1/chat/completions"
-    model: "gemma4:e2b"
+    model: "llama3"
 
