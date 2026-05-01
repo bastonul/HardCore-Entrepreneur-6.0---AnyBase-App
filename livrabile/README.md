@@ -72,6 +72,7 @@ OPTION B (Physical Phone):
   - Rebuild APK if needed
 
 ===================================================================================
+
 IMPORTANT NOTES
 
 - Backend MUST be running before opening the app
