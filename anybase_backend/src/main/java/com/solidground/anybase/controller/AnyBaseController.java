@@ -4,6 +4,7 @@ import com.solidground.anybase.dto.TranslationRequest;
 import com.solidground.anybase.service.CognitiveService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+//quiz changes rn
 
 @RestController
 @RequestMapping("/api")
@@ -31,4 +32,13 @@ public class AnyBaseController {
         String resultJson = cognitiveService.processText(request.getText(), request.getProfile());
         return ResponseEntity.ok(resultJson);
     }
+    @PostMapping("/quiz")
+    public ResponseEntity<String> generateQuiz(@RequestBody TranslationRequest request){
+        if(request.getText() == null || request.getText().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Empty payload.\"}");
+        }
+        String resultJson = cognitiveService.generateQuiz(request.getText(), request.getProfile());
+        return ResponseEntity.ok(resultJson);
+    }
 }
+

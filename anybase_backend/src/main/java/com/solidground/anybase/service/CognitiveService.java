@@ -9,7 +9,7 @@ import tools.jackson.databind.node.ObjectNode;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.JsonNode;
-
+//quiz management rn
 @Service
 public class CognitiveService {
 
@@ -62,6 +62,7 @@ public class CognitiveService {
         }
     }
 
+
     private String getSystemPromptForProfile(String profile) {
 
         if ("ADHD".equalsIgnoreCase(profile)) {
@@ -111,6 +112,41 @@ public class CognitiveService {
                 "Output ONLY a valid JSON object with exactly two keys: 'title' (the short string) and 'cards' (an array of strings containing the summarized points).";
 
 
+    }
+    public String generateQuiz(String inputText, String profile) { //quiz "logic"
+        try {
+            ObjectNode requestBody = objectMapper.createObjectNode();
+            requestBody.put("model", aiModel);
+            requestBody.put("temperature", 0.4);
+
+            ObjectNode responseFormat = objectMapper.createObjectNode();
+            responseFormat.put("type" , "json_object");
+            requestBody.set("response_format", responseFormat);
+
+            ArrayNode messages = requestBody.putArray("messages");
+
+            ObjectNode systemMessage = objectMapper.createObjectNode();
+            systemMessage.put("role", "system");
+            systemMessage.put("content", "You are an educational AI. Based ONLY on the user's provided text, generate exactly 4 multiple-choice questions. " +
+                    "Output ONLY a valid JSON object with a single key 'questions'. The value must be an array of objects. " +
+                    "Each object must have: 'q' (the question text), 'options' (an array of exactly 3 possible answer strings), and 'answer' (the exact correct string from the options).");
+            messages.add(systemMessage);
+
+            ObjectNode userMessage = objectMapper.createObjectNode();
+            userMessage.put("role", "user");
+            userMessage.put("content", inputText);
+            messages.add(userMessage);
+
+            HttpEntity<String> request = new HttpEntity<>(requestBody.toString());
+            ResponseEntity<String> response = restTemplate.postForEntity(apiURL, request, String.class);
+
+            JsonNode responseJson = objectMapper.readTree(response.getBody());
+            return responseJson.get("choices").get(0).get("message").get("content").asText();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{\"error\": \"Quiz generation failed.\"}";
+        }
     }
 }
 
