@@ -3,32 +3,55 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
 
-    static const String baseUrl = "http://10.0.2.2:8080/api"; //
-    //FOR PHYSICAL TESTING: change the 10.0.2.2  adress with the IPv4 address which results from running ipconfig in cmd(ex. 192.169.1.153
-    //DEFAULT: 10.0.2.2 = default local host alias for emulator
+  static const String baseUrl = "http://172.20.10.13:8080/api"; //
+  //FOR PHYSICAL TESTING: change the 10.0.2.2  adress with the IPv4 address which results from running ipconfig in cmd(ex. 192.169.1.153
+  //DEFAULT: 10.0.2.2 = default local host alias for emulator
 
-    static Future<Map<String, dynamic>> adaptContent(String text, String profile) async{
+  static Future<Map<String, dynamic>> adaptContent(String text,
+      String profile) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/adapt'),
+        headers: {'Content-type': 'application/json'},
+        body: jsonEncode({
+          'text': text,
+          'profile': profile}),
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+
+        return {
+          'title': data['title'] ?? profile,
+          'cards': List<String>.from(data['cards'] ?? []),
+        };
+      } else {
+        throw Exception('Server errror: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Network error; Cannot connect to the server');
+    }
+  }
+
+    static Future<List<dynamic>> generateQuiz
+    (String text, String profile) async {
       try {
         final response = await http.post(
-          Uri.parse('$baseUrl/adapt'),
+          Uri.parse('$baseUrl/quiz'),
           headers: {'Content-type': 'application/json'},
-          body: jsonEncode({
-            'text': text,
-            'profile': profile}),
-        );
+          body: jsonEncode({'text': text, 'profile': profile}),
+        ).timeout(const Duration(
+            seconds: 15)); // Increased timeout as AI takes a bit longer for quizzes
+
         if (response.statusCode == 200) {
           final Map<String, dynamic> data = jsonDecode(response.body);
-
-          return {
-            'title': data['title'] ?? profile,
-            'cards': List<String>.from(data['cards'] ?? []),
-          };
+          return data['questions'] ?? [];
         } else {
-          throw Exception('Server errror: ${response.statusCode}');
+          throw Exception('Server error: ${response.statusCode}');
         }
-      }catch(e) {
-            throw Exception('Network error; Cannot connect to the server');
-      }
-
+      } catch (e) {
+        throw Exception('Failed to generate quiz.');
       }
     }
+  }
+
+

@@ -1,0 +1,16 @@
+Index: lib/screens/quiz_screen.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/screens/quiz_screen.dart b/lib/screens/quiz_screen.dart
+--- a/lib/screens/quiz_screen.dart
++++ b/lib/screens/quiz_screen.dart	(date 1778590857017)
+@@ -3,5 +3,5 @@
+ class QuizScreen extends StatefulWidget {
+ 
+     final String title;
+-    
++    final List<dynamic>
+ }
+\ No newline at end of file

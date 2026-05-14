@@ -210,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen>{
               ),
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 28),
 
             // profiles
             const Text(
@@ -219,10 +219,13 @@ class _HomeScreenState extends State<HomeScreen>{
               textAlign: TextAlign.center,
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 22),
 
             if(_isLoading)
-              const Center(child: CircularProgressIndicator())
+              const SizedBox(
+                height: 345, //button position fix yay
+                child: Center(child: CircularProgressIndicator()),
+              )
             else
               GridView.count(
                 shrinkWrap: true,
@@ -253,6 +256,23 @@ class _HomeScreenState extends State<HomeScreen>{
                   ),
                 ],
               ),
+            const SizedBox(height: 28),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => const LibraryScreen(isQuizSelectionMode: true)),
+                );
+              },
+              icon: const Icon(Icons.quiz, size: 26),
+              label: const Text("QUIZ MODE", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              ),
+            ),
+            //const SizedBox(height: 20),
           ],
         ),
       ),

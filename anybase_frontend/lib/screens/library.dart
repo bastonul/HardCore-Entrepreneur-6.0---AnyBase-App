@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'flashcard_screen.dart';
+import '../services/api_service.dart';
+import 'quiz_screen.dart';
 
 class LibraryScreen extends StatefulWidget {
 
-    const LibraryScreen({Key? key}) : super(key: key);
+    final bool isQuizSelectionMode;
+    const LibraryScreen({Key? key, this.isQuizSelectionMode = false}) : super(key: key);
 
     @override
     _LibraryScreenState createState() => _LibraryScreenState();
@@ -68,18 +71,60 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       onPressed: () => _deleteNote(index),
                       icon: Icon(Icons.delete_outline, color: Colors.red,),
                     ),
-                  onTap:  (){
+                  onTap: () async {
+                    if (widget.isQuizSelectionMode) {
+                      // FLUXUL DE QUIZ
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) =>
+                        const Center(child: CircularProgressIndicator()),
+                      );
+
+                      try {
+                        String joinedText = List<String>.from(note['cards'])
+                            .join(" "); //text joining
+
+                        final questions = await ApiService.generateQuiz(
+                            joinedText, "DEFAULT"); //quiz request
+
+                        if (context.mounted) {
+                          Navigator.pop(context); // close loading
+                          if (questions.isEmpty) throw Exception(
+                              "AI didn't generate questions.");
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  QuizScreen(
+                                    title: note['title'] ?? 'Quiz',
+                                    questions: questions,
+                                  ),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          Navigator.pop(context); // close loading 2
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: $e')));
+                        }
+                      }
+                    } else {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => FlashcardScreen(
-                            cards: List<String>.from(note['cards']),
-                            isDyslexicMode: note['isDyslexic'] ?? false,
-                            title: note['title'] ?? 'Library',
-                          ),
+                          builder: (context) =>
+                              FlashcardScreen(
+                                cards: List<String>.from(note['cards']),
+                                isDyslexicMode: note['isDyslexic'] ?? false,
+                                title: note['title'] ?? 'Library',
+                              ),
                         ),
                       );
-                  },
+                    };
+                  }
                   ),
                   );
 
